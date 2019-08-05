@@ -13,7 +13,7 @@
 
 ### 欢迎页
 
-![](screenshot/演示1.gif)![](screenshot/演示1-1.gif){: width="310px"}
+<img src="screenshot/演示1.gif" width="260px" /><img src="screenshot/演示1-1.gif" width="310px" />
 
 
 早期版本的首页是左面这个推拉门动画:door::point_left::point_right::door:（由于“分裂大工”被捕，替换为右侧这个简单但更实用的点击->消失动画）
