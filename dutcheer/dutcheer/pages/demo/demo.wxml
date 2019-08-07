@@ -1,0 +1,13 @@
+<!--pages/demo/demo.wxml-->
+<view class='piccontainer'>
+<view wx:for="{{linearray}}" wx:for-item="i"  wx:key="*this" class='linecontainer'>
+  <view style='display:flex;height:13rpx'>
+    <view wx:for="{{showmatrix[i]}}" style='width:13rpx' wx:for-item="item" wx:key="id" >
+      <view hidden="{{!item.show}}">
+      <image style='width:10rpx;height:10rpx;' src="{{item.picsrc}}"></image>
+      </view>
+    </view>
+  </view>
+</view>
+</view>
+<button class="weui-btn" type='primary' bindtap="mypic">参与</button>

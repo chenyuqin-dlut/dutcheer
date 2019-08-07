@@ -1,0 +1,85 @@
+<!--pages/70years/70years.wxml-->
+<view class="page-body">
+  <image style='width:750rpx;height:100%; z-index:1; position:absolute; left:0; top:0;' src='../../images/photowall.jpg' mode='aspectFill'></image>
+  <view class="disappear">
+    <image class='roll1' src='../../images/roll1.png' mode="aspectFit"></image>
+    <image class='roll2' src='../../images/roll2.png' mode="aspectFit"></image>
+    <image class='roll3' src='../../images/roll3.png' mode="aspectFit"></image>
+    <image class='roll4' src='../../images/roll4.png' mode="aspectFit"></image>
+    <image class='roll5' src='../../images/roll5.png' mode="aspectFit"></image>
+    <image class='roll6' src='../../images/roll6.png' mode="aspectFit"></image>
+    <image class='roll7' src='../../images/roll7.png' mode="aspectFit"></image>
+    <image class='roll8' src='../../images/roll8.png' mode="aspectFit"></image>
+    <image class='roll9' src='../../images/roll9.png' mode="aspectFit"></image>
+  </view>
+
+
+  <view class='piccontainer'>
+    <view wx:for="{{linearray}}" wx:for-item="i" wx:key="*this" class='linecontainer' wx:for-index="x">
+      <view style='display:flex;height:13rpx;'>
+        <view wx:for="{{imgObj[i]}}" style='width:13rpx;' wx:for-item="item" wx:key="id" wx:for-index="y">
+
+          <view wx:if="{{item.show}}" animation="{{animationarray[x][y]}}">
+
+            <image style='width:10rpx;height:10rpx;' src="{{item.picsrc}}" class='{{picclass[x][y]}}'></image>
+
+          </view>
+
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class='button_c_show'>
+    <view class='joinnumber'> 我是第{{joinnum}}位参与者</view>
+    <button bindtap='light' type='warn' hidden='{{lighted}}' style='width:600rpx;border-radius:90rpx'>查看我的头像位置</button>
+
+    <button bindtap='shrink' hidden='{{!lighted}}' style='width:600rpx;background-color:#7FFFD4;border-radius:90rpx'>海纳百川</button>
+
+    <view bindtap='drawImage' style='text-align:center;margin:30rpx auto 30rpx auto;color:#CBCBCB'> 生成分享图</view>
+  </view>
+
+  <!-- <image
+src='https://wx.qlogo.cn/mmopen/vi_32/PiajxSqBRaEJuXeBbnJKARhRiagtAVPR77ejdlB6cSKEz1ibfPOwcVsRtKWejaUfiaOOB679TAhn8YXRYtIjiaTmQiaw/132' animation="{{testanimation}}"> </image> -->
+
+
+  <!-- <view class='piccontainer'>
+  <view wx:for="{{linearray}}" wx:for-item="i" wx:key="*this" class='linecontainer' wx:for-index="l">
+    <view style='display:flex;height:16rpx'>
+      <view wx:for="{{imgObj[i]}}" style='width:16rpx' wx:for-item="item" wx:key="id" wx:for-index="p">
+        <view wx:if="{{item.show}}" animation="{{animationarray[l][p]}}" >
+          <image style='width:12rpx;height:12rpx;' src="{{item.picsrc}}"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> -->
+
+
+
+  <!-- <button open-type="share" style='background-color:#00BFFF;color:white;width:600rpx;margin-top:50rpx'>转发给朋友/群聊</button> -->
+  <!-- <view wx:for="{{showcontrol}}" wx:for-item="item"  wx:for-index="i">
+  <view style='font-size:18rpx;display:flex;height:18rpx'>
+    <view wx:for="{{item}}" style='width:18rpx' wx:key="" wx:for-index="j">
+      <view  wx:if="{{item == 1}}">
+      <image style='width:14rpx;height:14rpx;' src="{{pic[i][j]}}"></image>
+      </view>
+    </view>
+  </view>
+</view> -->
+  <!-- <button class="weui-btn" type='primary' bindtap="rotateAndScaleThenTranslate">参与</button> -->
+
+  <view class='share_container' hidden='{{share_hidden}}'>
+    <view class='share_image_container'>
+      <image class='share_image' src='{{shareImgSrc}}'></image>
+    </view>
+    <view class='save_image_container'>
+      <button type='warn' bindtap='saveImage' hidden='{{saveImgBtnHidden}}'>保存图片</button>
+      <button type='warn' open-type="openSetting" bindopensetting='handleSetting ' hidden='{{openSettingBtnHidden}} '>保存前请点击授权</button>
+    </view>
+  </view>
+
+  <view class='canvas_container '>
+    <canvas style="width: 1080px; height: 1598px;" canvas-id="myCanvas"></canvas>
+  </view>
+</view>

@@ -1,0 +1,49 @@
+<!--pages/70years/70years.wxml-->
+
+<view class='piccontainer'>
+  <view wx:for="{{linearray}}" wx:for-item="i" wx:key="*this" class='linecontainer' wx:for-index="l">
+    <view style='display:flex;height:13rpx'>
+      <view wx:for="{{ccc[i]}}" style='width:13rpx' wx:for-item="item" wx:key="id" wx:for-index="p">
+        <view wx:if="{{item.show}}"  animation="{{animationarray[l][p]}}" >
+          <image style='width:10rpx;height:10rpx;' src="{{item.picsrc}}" class='{{picclass[l][p]}}'></image>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+  <!-- <image
+src='https://wx.qlogo.cn/mmopen/vi_32/PiajxSqBRaEJuXeBbnJKARhRiagtAVPR77ejdlB6cSKEz1ibfPOwcVsRtKWejaUfiaOOB679TAhn8YXRYtIjiaTmQiaw/132' animation="{{testanimation}}"> </image> -->
+
+
+<!-- <view class='piccontainer'>
+  <view wx:for="{{linearray}}" wx:for-item="i" wx:key="*this" class='linecontainer' wx:for-index="l">
+    <view style='display:flex;height:16rpx'>
+      <view wx:for="{{ccc[i]}}" style='width:16rpx' wx:for-item="item" wx:key="id" wx:for-index="p">
+        <view wx:if="{{item.show}}" animation="{{animationarray[l][p]}}" >
+          <image style='width:12rpx;height:12rpx;' src="{{item.picsrc}}"></image>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> -->
+
+<view class='button_class_show'>
+<button bindtap='light' type='warn'  hidden='{{lighted}}'  style='width:600rpx'>点亮我的头像</button>
+
+<button bindtap='shrink' hidden='{{!lighted}}'style='width:600rpx;background-color:#7FFFD4'>缩小我的头像</button>
+
+<button open-type="share" style='background-color:#00BFFF;color:white;width:600rpx;margin-top:50rpx'>转发给朋友/群聊</button>
+
+<button open-type="share" style='background-color:#00BFFF;color:white;width:600rpx;margin-top:50rpx'>分享到朋友圈</button>
+</view>
+<!-- <view wx:for="{{showcontrol}}" wx:for-item="item"  wx:for-index="i">
+  <view style='font-size:18rpx;display:flex;height:18rpx'>
+    <view wx:for="{{item}}" style='width:18rpx' wx:key="" wx:for-index="j">
+      <view  wx:if="{{item == 1}}">
+      <image style='width:14rpx;height:14rpx;' src="{{pic[i][j]}}"></image>
+      </view>
+    </view>
+  </view>
+</view> -->
+<!-- <button class="weui-btn" type='primary' bindtap="rotateAndScaleThenTranslate">参与</button> -->

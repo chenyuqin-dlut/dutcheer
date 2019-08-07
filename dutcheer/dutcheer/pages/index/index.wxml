@@ -1,0 +1,37 @@
+<view class="page-body">
+  <view class="page-section">
+    <image src='../../images/70years.png' style='position:absolute;left:173rpx;z-index:1;width:405rpx;height:585rpx;'></image>
+    <image src='../../images/activity.jpg' style='width:750rpx;height:584rpx;position:absolute;z-index:2' class='{{activity}}'></image>
+
+  </view>
+  <view style='position:relative;'>
+    <view style='font-size:40rpx;color:#e64340;text-align:center;margin:50rpx'>
+      {{invitetext}}
+    </view>
+
+    <button  type="warn" bindgetuserinfo="bindGetUserInfo" open-type="getUserInfo" style='width:500rpx;border-radius:90rpx'>{{starttext}}</button>
+    <image src='../../images/tap.png' class="tap"></image>
+  </view>
+
+
+
+  <!-- <view class="page-section">
+    <movable-area style="margin-left:-375rpx;width:1500rpx;text-align:center">
+      <image src='../../images/70years.png' mode="aspectFit" style='height:800rpx;'></image>
+      <movable-view class='{{left_disappear?"final":"start"}}' x="{{leftx}}" y="{{y}}" direction="all" bindchange="leftchange" damping="9999">
+        <image src="../../images/leftdoor1.jpg" mode="aspectFit" style='height:800rpx;'></image>
+      </movable-view>
+      <movable-view class='{{right_disappear?"final":"start"}}' x="{{rightx}}" y="{{y}}" direction="all" bindchange="rightchange" damping="9999">
+       <image src="../../images/rightdoor1.jpg" mode="aspectFit" style='height:800rpx;'></image>
+       </movable-view>
+    </movable-area>
+  </view>
+  <view class='{{right_disappear&left_disappear?"text_hidden":"start"}}' style='font-size:50rpx;color:#0073BE;text-align:center'>
+    请开启70周年校庆之门！
+  </view>
+
+  <view class='{{right_disappear&left_disappear?"button_show":"button_hidden"}}'>
+    <button bindtap="tap"  type="warn" bindgetuserinfo="bindGetUserInfo" open-type="getUserInfo">开启相聚70周年之旅</button>
+  </view> -->
+
+</view>

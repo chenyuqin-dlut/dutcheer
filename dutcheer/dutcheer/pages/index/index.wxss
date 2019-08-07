@@ -1,0 +1,121 @@
+/* .page-body{
+  background-color: #1a2b3c;
+} */
+
+.disappear{
+  animation: disappear 0.5s forwards;
+}
+
+@keyframes disappear{
+  0%{
+    opacity: 1
+  }
+  100%{
+    opacity: 0
+  }
+}
+
+.tap {
+  width: 100rpx;
+  height: 100rpx;
+  position: relative;
+  top: -40rpx;
+  left: 400rpx;
+  animation: tap 3s infinite;
+  
+}
+
+@keyframes tap {
+  0% {
+    transform: translate(0,0) rotate(-30deg);
+
+  }
+
+  50% {
+    transform: translate(30rpx,30rpx) rotate(-30deg);
+
+  }
+
+  100% {
+    transform: translate(0,0) rotate(-30deg);
+  }
+}
+
+movable-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 800rpx;
+  width: 377rpx;
+  background: #fffffe;
+  color: #fff;
+}
+
+movable-area {
+  height: 800rpx;
+  width: 750rpx;
+  background-color: #fffffe;
+  overflow: hidden;
+}
+
+.max {
+  width: 600rpx;
+  height: 600rpx;
+}
+
+.page-section {
+  width: 750rpx;
+  height:585rpx;
+}
+
+.page-section:last-child {
+  margin-bottom: 0;
+}
+
+.page-section-title {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+  padding-left: 30rpx;
+  padding-right: 30rpx;
+}
+
+.start {
+  opacity: 1;
+}
+
+.final {
+  opacity: 0;
+}
+
+.button_hidden {
+  opacity: 0;
+}
+
+.button_show {
+  animation: top 1s forwards;
+}
+
+@keyframes top {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.text_hidden {
+  animation: text 1s forwards;
+}
+
+@keyframes text {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

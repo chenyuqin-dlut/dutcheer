@@ -1,0 +1,355 @@
+login as: root
+root@123.56.10.66's password:
+Last failed login: Thu May 30 10:11:33 CST 2019 from 152.243.92.153 on ssh:notty
+There were 33 failed login attempts since the last successful login.
+Last login: Thu May 16 10:52:05 2019 from 111.117.122.223
+
+Welcome to Alibaba Cloud Elastic Compute Service !
+
+[root@iz2ze1z959eu3w0t9e97hbz ~]# cd ../
+[root@iz2ze1z959eu3w0t9e97hbz /]# du -sh *
+0       bin
+180M    boot
+4.0K    data
+0       dev
+38M     etc
+341M    home
+0       lib
+0       lib64
+16K     lost+found
+4.0K    media
+4.0K    mnt
+4.0K    opt
+du: cannot access ‘proc/13872/task/13872/fd/4’: No such file or directory
+du: cannot access ‘proc/13872/task/13872/fdinfo/4’: No such file or directory
+du: cannot access ‘proc/13872/fd/4’: No such file or directory
+du: cannot access ‘proc/13872/fdinfo/4’: No such file or directory
+0       proc
+5.8G    root
+185M    run
+0       sbin
+4.0K    srv
+0       sys
+84K     tmp
+3.5G    usr
+28G     var
+[root@iz2ze1z959eu3w0t9e97hbz /]# cd usr
+[root@iz2ze1z959eu3w0t9e97hbz usr]# du -sh *
+302M    bin
+4.0K    etc
+4.0K    games
+33M     include
+1.2G    lib
+546M    lib64
+95M     libexec
+474M    local
+211M    sbin
+745M    share
+12K     src
+0       tmp
+[root@iz2ze1z959eu3w0t9e97hbz usr]# cd lib
+[root@iz2ze1z959eu3w0t9e97hbz lib]# du -sh *
+20K     audit
+4.0K    binfmt.d
+12K     cloud-init
+0       cpp
+24K     debug
+1.6M    dracut
+20K     dtrace
+348K    elfutils
+748K    firewalld
+193M    firmware
+4.0K    games
+8.7M    gcc
+6.3M    gconv
+321M    golang
+2.8M    grub
+2.6M    i686
+4.0K    java
+4.0K    java-1.5.0
+4.0K    java-1.6.0
+4.0K    java-1.7.0
+4.0K    java-1.8.0
+4.0K    java-ext
+126M    jvm
+4.0K    jvm-commmon
+44K     jvm-exports
+28K     jvm-private
+4.5M    kbd
+24K     kdump
+24K     kernel
+156K    ld-2.17.so
+0       ld-linux.so.2
+16K     libanl-2.17.so
+0       libanl.so.1
+32K     libasm-0.168.so
+0       libasm.so.1
+0       libattr.so.1
+20K     libattr.so.1.1.0
+0       libaudit.so.1
+120K    libaudit.so.1.0.0
+0       libauparse.so.0
+124K    libauparse.so.0.0.0
+8.0K    libBrokenLocale-2.17.so
+0       libBrokenLocale.so.1
+0       libbz2.so.1
+76K     libbz2.so.1.0.6
+2.0M    libc-2.17.so
+0       libcap-ng.so.0
+20K     libcap-ng.so.0.0.0
+0       libcap.so.2
+20K     libcap.so.2.22
+192K    libcidn-2.17.so
+0       libcidn.so.1
+0       libcrack.so.2
+32K     libcrack.so.2.9.0
+36K     libcrypt-2.17.so
+0       libcrypt.so.1
+0       libc.so.6
+1.8M    libdb-5.3.so
+0       libdb-5.so
+20K     libdl-2.17.so
+0       libdl.so.2
+320K    libdw-0.168.so
+0       libdw.so.1
+104K    libelf-0.168.so
+0       libelf.so.1
+4.0K    libfreebl3.chk
+12K     libfreebl3.so
+4.0K    libfreeblpriv3.chk
+440K    libfreeblpriv3.so
+104K    libgcc_s-4.8.5-20150702.so.1
+0       libgcc_s.so.1
+0       libgcrypt.so.11
+548K    libgcrypt.so.11.8.2
+0       libgpg-error.so.0
+20K     libgpg-error.so.0.10.0
+0       liblzma.so.5
+168K    liblzma.so.5.2.2
+300K    libm-2.17.so
+24K     libmemusage.so
+0       libm.so.6
+108K    libnsl-2.17.so
+0       libnsl.so.1
+40K     libnss_compat-2.17.so
+0       libnss_compat.so.2
+36K     libnss_db-2.17.so
+0       libnss_db.so.2
+28K     libnss_dns-2.17.so
+0       libnss_dns.so.2
+56K     libnss_files-2.17.so
+0       libnss_files.so.2
+24K     libnss_hesiod-2.17.so
+0       libnss_hesiod.so.2
+56K     libnss_myhostname.so.2
+252K    libnss_mymachines.so.2
+52K     libnss_nis-2.17.so
+64K     libnss_nisplus-2.17.so
+0       libnss_nisplus.so.2
+0       libnss_nis.so.2
+0       libpamc.so.0
+16K     libpamc.so.0.82.1
+0       libpam_misc.so.0
+12K     libpam_misc.so.0.82.0
+0       libpam.so.0
+56K     libpam.so.0.83.1
+8.0K    libpcprofile.so
+0       libpcre16.so.0
+368K    libpcre16.so.0.2.0
+0       libpcre32.so.0
+352K    libpcre32.so.0.0.0
+0       libpcrecpp.so.0
+36K     libpcrecpp.so.0.0.0
+0       libpcreposix.so.0
+12K     libpcreposix.so.0.0.1
+0       libpcre.so.1
+404K    libpcre.so.1.2.0
+136K    libpthread-2.17.so
+0       libpthread.so.0
+104K    libresolv-2.17.so
+0       libresolv.so.2
+40K     librt-2.17.so
+0       librt.so.1
+20K     libSegFault.so
+152K    libselinux.so.1
+636K    libsepol.so.1
+0       libstdc++.so.6
+912K    libstdc++.so.6.0.19
+0       libsystemd-daemon.so.0
+24K     libsystemd-daemon.so.0.0.12
+0       libsystemd-id128.so.0
+20K     libsystemd-id128.so.0.0.28
+0       libsystemd-journal.so.0
+140K    libsystemd-journal.so.0.11.5
+0       libsystemd-login.so.0
+56K     libsystemd-login.so.0.9.3
+0       libsystemd.so.0
+172K    libsystemd.so.0.6.0
+36K     libthread_db-1.0.so
+0       libthread_db.so.1
+0       libudev.so.1
+84K     libudev.so.1.6.2
+16K     libutil-2.17.so
+0       libutil.so.1
+0       libz.so.1
+88K     libz.so.1.2.7
+102M    locale
+4.0K    lsb
+24K     modprobe.d
+298M    modules
+4.0K    modules-load.d
+12K     mozilla
+16K     NetworkManager
+29M     node_modules
+140K    polkit-1
+37M     python2.7
+604K    rpm
+112K    rtkaio
+980K    security
+4.0K    sse2
+16K     sysctl.d
+8.7M    systemd
+108K    tmpfiles.d
+100K    tuned
+12M     udev
+356K    udisks2
+44K     yum-plugins
+[root@iz2ze1z959eu3w0t9e97hbz lib]# cd ../
+[root@iz2ze1z959eu3w0t9e97hbz usr]# cd toor
+-bash: cd: toor: No such file or directory
+[root@iz2ze1z959eu3w0t9e97hbz usr]# cd root
+-bash: cd: root: No such file or directory
+[root@iz2ze1z959eu3w0t9e97hbz usr]# cd ../
+[root@iz2ze1z959eu3w0t9e97hbz /]# ls
+bin   data  etc   lib    lost+found  mnt  proc  run   srv  tmp  var
+boot  dev   home  lib64  media       opt  root  sbin  sys  usr
+[root@iz2ze1z959eu3w0t9e97hbz /]# cd root
+[root@iz2ze1z959eu3w0t9e97hbz ~]# du -sh *
+4.0K    dump.rdb
+4.0K    env.txt
+19M     frp
+636M    java
+472M    ngrok
+632K    phpredis
+6.8M    phpredis-2.2.4
+3.3M    phpredis-3.1.4
+1.9M    phpredis-phpredis-95aa6de
+228K    php-redis.zip
+96K     sa_recovery.log
+984K    sa_recovery.log.bak
+0       use
+[root@iz2ze1z959eu3w0t9e97hbz ~]# df   -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/vda1        40G   38G     0 100% /
+devtmpfs        1.9G     0  1.9G   0% /dev
+tmpfs           1.9G     0  1.9G   0% /dev/shm
+tmpfs           1.9G  185M  1.7G  10% /run
+tmpfs           1.9G     0  1.9G   0% /sys/fs/cgroup
+tmpfs           380M     0  380M   0% /run/user/0
+[root@iz2ze1z959eu3w0t9e97hbz ~]# cd ../
+[root@iz2ze1z959eu3w0t9e97hbz /]# du -sh *
+0       bin
+180M    boot
+4.0K    data
+0       dev
+38M     etc
+342M    home
+0       lib
+0       lib64
+16K     lost+found
+4.0K    media
+4.0K    mnt
+4.0K    opt
+du: cannot access ‘proc/16630/task/16630/fd/4’: No such file or directory
+du: cannot access ‘proc/16630/task/16630/fdinfo/4’: No such file or directory
+du: cannot access ‘proc/16630/fd/4’: No such file or directory
+du: cannot access ‘proc/16630/fdinfo/4’: No such file or directory
+0       proc
+5.8G    root
+185M    run
+0       sbin
+4.0K    srv
+0       sys
+84K     tmp
+3.5G    usr
+28G     var
+[root@iz2ze1z959eu3w0t9e97hbz /]# cd var
+[root@iz2ze1z959eu3w0t9e97hbz var]# du -sh *
+4.0K    adm
+152M    cache
+4.0K    crash
+24K     db
+8.0K    empty
+4.0K    games
+4.0K    gopher
+12K     kerberos
+1.4G    lib
+4.0K    local
+0       lock
+17G     log
+0       mail
+4.0K    nis
+4.0K    opt
+4.0K    preserve
+0       run
+56K     spool
+319M    svn
+28K     tmp
+9.2G    www
+4.0K    yp
+[root@iz2ze1z959eu3w0t9e97hbz var]# cd www
+[root@iz2ze1z959eu3w0t9e97hbz www]# du -sh *
+4.0K    cgi-bin
+9.2G    html
+[root@iz2ze1z959eu3w0t9e97hbz www]# cd html
+[root@iz2ze1z959eu3w0t9e97hbz html]# du -sh *
+4.0K    1.php
+960K    2333
+8.6G    api
+32K     cet
+4.0K    connect.php
+0       connect_redis.php
+8.1M    ele_fee
+20K     files
+4.0K    index.html
+4.0K    index.php
+34M     mp
+4.0K    MP_verify_6P8yXsFh913BZ35T.txt
+1.9M    personal
+0       redis_con.php
+35M     test
+40K     wuwu11.php
+59M     wx
+4.0K    密码.txt
+4.0K    小程序与公众号关联须知.txt
+4.0K    开发日志.txt
+4.0K    端口使用情况.txt
+[root@iz2ze1z959eu3w0t9e97hbz html]# cd api
+[root@iz2ze1z959eu3w0t9e97hbz api]# du -sh *
+4.0K    api.php
+4.0K    api_redis.php
+56K     GatewayClient
+8.6G    GatewayWorker
+64K     idagong
+752K    jiaowu
+4.0K    test_redis.php
+[root@iz2ze1z959eu3w0t9e97hbz api]# cd GatewayWorker
+[root@iz2ze1z959eu3w0t9e97hbz GatewayWorker]# du -sh *
+84K     Applications
+4.0K    composer.json
+4.0K    start.php
+8.6G    vendor
+[root@iz2ze1z959eu3w0t9e97hbz GatewayWorker]# cd vendor
+[root@iz2ze1z959eu3w0t9e97hbz vendor]# du -sh *
+4.0K    autoload.php
+48K     composer
+8.6G    workerman
+[root@iz2ze1z959eu3w0t9e97hbz vendor]# cd workman
+-bash: cd: workman: No such file or directory
+[root@iz2ze1z959eu3w0t9e97hbz vendor]# cd workerman
+[root@iz2ze1z959eu3w0t9e97hbz workerman]# du -sh *
+192K    gateway-worker
+4.0K    _var_www_html_api_GatewayWorker_start.php.pid
+328K    workerman
+8.6G    workerman.log
+[root@iz2ze1z959eu3w0t9e97hbz workerman]#

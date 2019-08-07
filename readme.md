@@ -40,11 +40,13 @@
 
 ---
 
-## 静态拼图
+## 主要功能实现方法
 
-<img src="screenshot/演示3.gif" width="260px" />
+### 静态拼图
 
-拼图的形状是通过`70years.js`中的`showcontrol`这个二位数组来控制的
+![](screenshot/2019-08-05-16-58-46.png)
+
+拼图的形状是通过`70years.js`中的`showcontrol`这个二位数组来控制的，控制方法很简单：在wxml渲染层使用条件渲染`wx:if="{{item.show}}"`，如果数组成员为“1”，则对应的图片显示，为“0”反之，后面我们绑定图片、动画、class时都是使用类似的办法进行数据绑定，可以称为矩阵式控制
 
 ![](screenshot/2019-08-04-20-14-16.png)
 
@@ -52,7 +54,15 @@
 
 ![](screenshot/矩阵.gif)
 
-想要比较细腻的显示指定图形，矩阵大约要有2000~3000个成员，这个工作量难以手动完成（如果你是拼豆爱好者或者Minecraft资深玩家，可以试试），这里我使用的是matlab来完成这个工作，代码如下：
+这个矩阵是由下面这张最普通、最常见的一张校庆标志图片转换而来的
+
+<img src="screenshot/70.png" width="260px" />
+
+基本思路是先将彩色图片转换为灰度图片，再选取一个阈值进行二值化处理，最后导出二值矩阵
+
+![](screenshot/2019-08-04-21-21-34.png)
+
+matlab代码如下：
 
 ```matlab
 tu=imread('46.png'); %读取图片
@@ -78,38 +88,378 @@ csvwrite('0和1矩阵x.csv',tu2);
 %将矩阵以csv格式输出
 ```
 
-![](screenshot/2019-08-04-21-21-34.png)
-
 这里需要注意两点：
 
-> * 将图片进行处理前需将图片宽高都修改到50像素左右，不然矩阵过大会导致后期渲染动画的数量急剧增加，性能急剧下降
-> * 由于我处理的这张图片缩小之后上部边缘有一些模糊，所以我没有采用OSTU方法给我的阈值而是自己指定了一个0.95作为阈值，这个值对于其他图片可能不是最佳的，使用时需注意修改代码
+> * 想要比较细腻的显示指定图形，矩阵至少要有2000~3000个成员，但是成员过多又会导致后期渲染动画的压力急剧增加，变得卡顿，所以在进行图像的二值化之前需酌情调整图片尺寸
+> * 由于我处理的这张图片尺寸缩小之后上部边缘有一些模糊，所以我没有采用OSTU方法给我的阈值而是自己指定了一个0.95作为阈值，这个值对于其他图片可能不是最佳的，使用时需注意修改代码
 
-matlab程序运行之后就会得到一个`0和1矩阵x.csv`，里面就是这张图片的二值矩阵，但这个矩阵并不能直接粘贴到代码中使用，需要为每一行添加`[`和`]`，这里需要结合使用Excel的下拉复制功能和notepad++的`Ctrl+H`替换功能
+matlab程序运行之后就会得到一个`0和1矩阵x.csv`，里面就是这张图片的二值矩阵，但这个矩阵并不能直接粘贴到代码中使用，需要为每一行添加`[`和`]`，这里需要结合使用Excel的下拉复制功能和notepad++的`Ctrl + H`替换功能
 
-## 动画系统
+~~如果你是拼豆爱好者或者Minecraft资深玩家，可以不用按上面的套路来，直接打开Excel，手动填充这个矩阵~~
 
-拼图动画是使用微信小程序提供的`Animation API`来创建的，如果你没有接触过这个API，下面这个示例能告诉你它的基本作用
+当然，我们的像素拼图不能由“0”和“1”构成吧？我们需要搜集一些头像，通过`picsrc`这个数组进行索引
+
+![](screenshot/2019-08-07-02-36-52.png)
+
+通过下面这部分代码将`showcontrol`、`picsrc`结合起来生成对象数组
+
+```JavaScript
+//showcontrol是二维数组，自然使用双层循环
+for (var l = 0; l < that.data.showcontrol.length; l++) {
+  imgObj[l] = new Array();
+  for (var p = 0; p < that.data.showcontrol[l].length; p++) {
+    //对象矩阵各属性的设置
+    imgObj[l][p] = {
+      id: picnum,
+      //设置唯一的id，否则wx:for刷新时对象会被反复新建，造成卡顿
+      picsrc: picsrc[Math.floor(Math.random() * picsrc.length)],
+      //本对象显示的图片从picsrc数组里随机选取
+      show: that.data.showcontrol[l][p]
+      //由showcontrol矩阵来控制本对象是否显示
+    };
+    picnum++;
+  }
+}
+```
+
+wxml中的代码如下：
+
+```html
+  <view class='piccontainer'>
+    <view wx:for="{{linearray}}" wx:for-item="i" wx:key="*this" class='linecontainer' wx:for-index="x">
+      <view style='display:flex;height:13rpx;'>
+        <view wx:for="{{imgObj[i]}}" style='width:13rpx;' wx:for-item="item" wx:key="id" wx:for-index="y">
+          <view wx:if="{{item.show}}" >
+            <image style='width:10rpx;height:10rpx;' src="{{item.picsrc}}" ></image>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+```
+
+最外层的`linearray`是一个一维数组：`[1,2，...36]`，采用这种办法进行列表渲染是综合各种因素的折中之举，可能不是最好的办法
+
+---
+
+### 拼图动画
+
+<img src="screenshot/演示3.gif" width="300px" />
+
+如上节中所述：头像拼图的动画是通过一个和`showcontrol`等宽同高的矩阵`animationarray`来进行控制的，矩阵内的成员是一个个动画队列，这个队列是用微信小程序的`Animation API`来进行创建的，下面这个示例能说明这个api的基本功能
 
 ![](screenshot/动画演示.gif)
 
-`Animation API`不光能创建单个动画，还能如上所示创建复合动画和动画队列，这是我们接下来要用到的，拼图动画的各项参数
+拼图动画是由`扩散`和`聚集`两部分动画构成的，且`扩散`是为`聚集`服务的，是`聚集`的必要条件
 
-### 动画
+#### 扩散动画
+
+首先，在加载动画之前，静态的图片就已经生成了，我们希望图片在在以原始位置为几何中心的一个恰当范围内进行随机扩散，同时放大，给人一种“星汉灿烂若出其中，日月之行若出其里”的感觉，然后再聚拢合成：“周公吐哺，天下归心”；假设扩散半径是a，那么得到(-a,a)区间随机数的办法就是(random\*2a-a)，经过多次测试，a确定为1000，所以扩散距离就设置为(random\*2000-1000)
+
+同时，我们还需要为duration设置延时:clock8:，这是是因为scale是(t/duration)的函数:chart_with_downwards_trend:，如果t、duration一致，那么数千张图片将会呈现完全一致的放大效果，这是比较无趣的；这两个参数中，更改t需要延时触发，更改duration需要延时结束，出于操作上的方便，这里设置成设置延时结束
+
+```JavaScript
+    var animation = wx.createAnimation({
+      timingFunction: 'linear',
+    });
+
+    var animationarray = new Array();
+
+    for (var l = 0; l < that.data.showcontrol.length; l++) {
+      console.log(l)
+      animationarray[l] = new Array();
+      for (var p = 0; p < that.data.showcontrol[l].length; p++) {
+        if (that.data.showcontrol[l][p] == 1) {
+         //将扩散距离在translate中设置为(random*2000-1000)是因为我们希望动画中的图片是在以自己为几何中心的一个恰当范围内实现随机扩散,而得到(-a,a)区间随机数的办法就是(random*2a-a)，经过多次测试，a确定为1000
+          animation = animation.translate(Math.floor(Math.random() * 2000 - 1000), Math.floor(Math.random() * 2000 - 1000)).scale(Math.floor(Math.random() * 10)).step({
+            duration: 7000 + Math.floor(Math.random() * 2000)
+          }) 
+          //为duration设置延时是因为scale是(t/duration)的函数，如果t,duration一致，那么数千张图片将会呈现完全一致的放大效果，这是比较无趣的；更改t需要延时触发，更改duration需要延时结束，这里，出于操作上的方便，设置延时结束，更改duration
+          animationarray[l][p] = animation.export()
+          
+        }
+      }
+    }
+```
+
+#### 用户头像的特殊处理
+
+在扩散动画当中，如果user的头像图片不做处理，那就成了星光淹没在银河中，完全体现不出985带学生社会主义接班人的身份嘛，所以要放大整整35倍:laughing:，而扩散半径仅为250，否则头像大半都会移动到屏幕之外；需要注意:warning:：用户头像的扩散动画`animationarray[userx][usery]`里面的`userx`和`usery`可不能通过`random*height|width`得到，因为`showcontrol`里面有大量为空（0）的地方，要是取到这些值可就没有社会主义接班人了，要先将不为空的地方挑出来，然后再在这些坐标里面进行随机
+
+```JavaScript
+//是的，user的头像图片将享受不一样的待遇，放大整整35倍，扩散半径仅为250，这一切都是为了让user享受到社会主义接班人的应有待遇，需要注意，animationarray[userx][usery]里面的userx和usery不能通过random*height|width得到，因为showcontrol里面有大量为空（0）的地方，要是取到这些值可就没有社会主义接班人了；要先将不为空的地方挑出来，然后在这些坐标里面进行随机
+    animation = animation.translate(Math.floor(Math.random() * 500 - 250), Math.floor(Math.random() * 500 - 250)).scale(35).step({
+      duration: 8000
+    })
+    animationarray[userx][usery] = animation.export()
+
+```
+
+#### 聚集动画
+
+聚集动画就很简单了，放回原位，恢复大小嘛，这里唯一值得说的就是通过设置动画的执行时间，从而实现波浪效果，动画矩阵生成的时候内外循环的控制变量`l`和`p`和会逐渐增大，他们分别对应从上到下，从左到右，我们希望哪一个图片先归位，就减少它动画的执行时间，后归位则反之，这里，我将`duration`设置成`6000 + 80 * p`就会得到从左向右归位的效果:arrow_right:，加上`l`就可实现矢量控制:arrow_lower_right:
+
+```JavaScript
+var animation1 = wx.createAnimation({
+  timingFunction: 'ease',
+})
+
+var animationarray1 = new Array();
+    //仍然使用showcontrol数组控制循环
+    for (var l = 0; l < that.data.showcontrol.length; l++) {
+      animationarray1[l] = new Array();
+      for (var p = 0; p < that.data.showcontrol[l].length; p++) {
+        if (that.data.showcontrol[l][p] == 1) {  
+          //showcontrol == 1 才创建动画，不浪费运算资源
+          animation1 = animation1.translate(0, 0).scale(1).step({
+            //创建动画序列:移动和缩放，它们是同时执行的
+            duration: 6000 + 80 * p
+            //设置动画的执行时间，从从左到右每列增加80ms，实现波浪效果
+          })
+          animationarray1[l][p] = animation1.export()
+          //将动画队列导出，赋值给矩阵中对应的元素
+        }
+      }
+    }
+```
+
+#### 动画合成
+
+由于我们渲染的对象太多，将扩散动画和聚集动画写到一个动画队列里将会导致严重的性能问题，因此，需要手动设置延时加载，扩散动画是在页面生成约13s之后才加载的，而聚集动画是在其之后6.5s，之所以延迟这么久，因为由于渲染量过大，连静态的图片矩阵都需要3s左右才能生成，这一段空档就需要别的内容来填补，所以安排了历史卷轴环节来为渲染赢得时间，也就是说，历史卷轴其实和拼图动画是在一个page里面的，虽然渲染远远用不了13s，但历史卷轴作为一个正式环节，时间过短又不太好；
+
+```JavaScript
+//由于我们渲染的对象太多，将扩散动画和聚集动画写到一个动画队列里将会导致严重的性能问题，因此，需要手动设置延时加载，单位是ms
+    setTimeout(function() {
+      that.setData({
+        animationarray: animationarray
+      })
+      setTimeout(function() {
+        that.setData({
+          animationarray: animationarray1
+        })
+      }, 6500)
+    }, 13000)
+```
+
+最后，在渲染层为图片所属的`view`增加动画属性`animation`并将矩阵`animationarray`绑定到`animation`属性上即可
+
+```html
+  <view class='piccontainer'>
+    <view wx:for="{{linearray}}" wx:for-item="i" wx:key="*this" class='linecontainer' wx:for-index="x">
+      <view style='display:flex;height:13rpx;'>
+        <view wx:for="{{imgObj[i]}}" style='width:13rpx;' wx:for-item="item" wx:key="id" wx:for-index="y">
+          <view wx:if="{{item.show}}" animation="{{animationarray[x][y]}}">
+            <image style='width:10rpx;height:10rpx;' src="{{item.picsrc}}" ></image>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+```
 
 
+#### 头像的点亮
 
-### 小程序logo
+通过css3动画实现，用户点击`查看我的头像位置`时，会将为用户头像的class设置为`zoom`，点击`海纳百川`时，则设置为`shrink`
+
+```css
+
+.zoom {
+  animation: zoom 2s forwards, light 3s infinite;
+  position: relative;
+  z-index: 99;
+  transform: translateZ(120rpx);
+}
+
+@keyframes zoom {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+
+  100% {
+    transform: scale(7) translate(0, -6rpx);
+  }
+}
+
+.shrink {
+  animation: shrink 2s forwards, light 3s infinite;
+  position: relative;
+  z-index: 99;
+}
+
+@keyframes shrink {
+  0% {
+    transform: scale(7) translate(0, -6rpx);
+  }
+
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+@keyframes light {
+  0% {
+    box-shadow: 0rpx 0rpx 0rpx 0rpx #fff;
+  }
+
+  50% {
+    box-shadow: 0rpx 0rpx 7rpx 7rpx #fff;
+  }
+
+  100% {
+    box-shadow: 0rpx 0rpx 0rpx 0rpx #fff;
+  }
+}
+```
+
+### 历史卷轴:scroll:
+
+<img src="screenshot/演示2.gif" width="260px" />
+
+卷轴动画很简单，就是将各个图片的位置先按次序码好（大部分图片初始时都会在屏幕之外），然后让他们同时向上移动就可以了，这部分直接看源码就能明白
+
+```html
+  <view class="disappear">
+    <image class='roll1' src='../../images/roll1.png' mode="aspectFit"></image>
+    <image class='roll2' src='../../images/roll2.png' mode="aspectFit"></image>
+    <image class='roll3' src='../../images/roll3.png' mode="aspectFit"></image>
+    <image class='roll4' src='../../images/roll4.png' mode="aspectFit"></image>
+    <image class='roll5' src='../../images/roll5.png' mode="aspectFit"></image>
+    <image class='roll6' src='../../images/roll6.png' mode="aspectFit"></image>
+    <image class='roll7' src='../../images/roll7.png' mode="aspectFit"></image>
+    <image class='roll8' src='../../images/roll8.png' mode="aspectFit"></image>
+    <image class='roll9' src='../../images/roll9.png' mode="aspectFit"></image>
+  </view>
+```
+
+```css
+.roll1 {
+  position: absolute;
+  width: 600rpx;
+  top: 400rpx;
+  left: 75rpx;
+  animation: roll 15s forwards linear;
+  -webkit-animation: roll 15s forwards linear;
+}
+
+.roll2 {
+  position: absolute;
+  width: 600rpx;
+  top: 700rpx;
+  left: 75rpx;
+  animation: roll 15s forwards linear;
+}
+
+/*中间省略*/
+
+@keyframes roll {
+  0% {
+    transform: translate(0)
+  }
+
+  100% {
+    transform: translate(0,-2800rpx)
+  }
+}
+```
+
+### 推拉开门动画
+
+<img src="screenshot/演示1.gif" />
+
+这个推拉门是用一个`movable-area`包裹两个`movable-view`来实现的
+
+```html
+    <movable-area style="margin-left:-375rpx;width:1500rpx;text-align:center">
+      <image src='../../images/70years.png' mode="aspectFit" style='height:800rpx;'></image>
+      <movable-view class='{{left_disappear?"final":"start"}}' x="{{leftx}}" y="{{y}}" direction="all" bindchange="leftchange" damping="9999">
+        <image src="../../images/leftdoor1.jpg" mode="aspectFit" style='height:800rpx;'></image>
+      </movable-view>
+      <movable-view class='{{right_disappear?"final":"start"}}' x="{{rightx}}" y="{{y}}" direction="all" bindchange="rightchange" damping="9999">
+       <image src="../../images/rightdoor1.jpg" mode="aspectFit" style='height:800rpx;'></image>
+       </movable-view>
+    </movable-area>
+```
+实现的过程是这样的，首先把校庆标志放到`movable-area`里面，然后将左右门的图片分别放到左右两个`movable-view`中；将两个`movable-view`组件的`bindchange`事件分别绑定到`leftchange`和`rightchange`函数上，如果检测到组件的`x`坐标超过阈值，将对应的`left_disappear | right_disappear`置`true`，`movable-view`的class则变为`final`，`final`对应的css样式只有一行`opacity: 0;`，此时对应的门则消失，实现推拉开门
+
+> 很完美，对不对？
+
+但是，`movable-view`有个特性，默认无法移动到`movable-area`之外，哪怕设置成可以移动到外面，也有很大的阻尼感，而且松手后自动弹回
+
+> 那把`movable-area`做大点不就行了？
+
+真是个鬼才，我就是这么做的，但是`movable-view`初始位置靠左上对齐，这下我们根本看不到门了
+
+> 那就把门移过来
+
+想得不错，将`movable-view`的`x`属性绑定到逻辑层的变量上，将初始值设置为门到左边缘的距离就行了；甚至这个变量还可以顺手用来做个限位，当`x`向反方向移动时，立刻重置`x`，堪称事半功倍:clap:
+
+> 但是事情并没有这么简单，因为我发现`x`的单位是px而不是rpx
+
+稍有常识的开发者都能看出，由于其上级组件`movable-area`采用的单位是rpx，所以这个组件距左边缘的px距离在不同手机上是不一样的，这个`x`的校正值需要根据设备信息进行动态调整
+
+> 可我怎么能知道他的屏幕有多宽？
+
+还真可以，`wx.getSystemInfo`这个API能在无需授权的情况下获取设备屏幕的宽度，之后我们再据此进行简单的比例计算，便可以将`movable-area`调整到我们希望的位置，就是这样：
+
+```JavaScript
+  onLoad: function() {
+    let that = this;
+    wx.getSystemInfo({
+      success: function(res) {
+        console.log(res)
+        var leftx = (res.screenWidth / 750) * 375
+        var rightx = (res.screenWidth / 750) * 750
+        console.log(res.screenWidth)
+        that.setData({
+          leftx: leftx,
+          rightx: rightx,
+          screenWidth: res.screenWidth
+        })
+      },
+    })
+  },
+```
+
+当然，阈值也要动态调整，过程类似，直接看源码即可
+
+> * 另一个版本的首页比较简单，不另成节了
+> * 如果要更换主页样式，只用在wxml界面释放注释（当然，得先把现在这个注释了）即可，其他文件无需调整，已做好兼容
+
+### 分享图的生成
+
+<img src="screenshot/Screenshot_2019-08-04-03-50.png" width="260px" />
+
+---
+
+## 其他事项
+
+### 背景图的制作和使用
+
+为了烘托氛围，头像拼图页面最好不要使用纯色背景，而需要一张背景图，可以从谷歌上搜一张“头像拼图”，通过一个`高斯模糊`+`调低亮度`即可得到得到背景图，但是需要注意:warning:，移动设备的屏幕宽度多种多样，这张图可不能因为设备大小而发生变形，甚至将白底给漏了出来，所以我们先将它的宽高设置好，再将图片的mode设置为`aspectFill`，这个模式会保持纵横比缩放图片，保证图片的短边能完全显示出来，这里的技巧就是使用一张1080*1080的方形图片，所以**两边都是短边**，不管任何时候，图片都能铺满屏幕，而且绝不会将白底漏出来
+
+```html
+<image mode='aspectFill' style='width:750rpx;height:100%; z-index:1; position:absolute; left:0; top:0;' src='../../images/photowall.jpg' ></image>
+```
+
+<img src="screenshot/photowall.jpg" width="300px" />
+
+
+### 小程序logo的极速制作
 
 ![](screenshot/2019-08-04-18-43-51.png)
 
-首先，既然要把这个小程序用于你们的组织，那这个logo就得改改，如果你想获得我这种风格的logo，那就打开你的PPT8
+如果有专业美工设计logo，自然不能让我们coder被逼上全栈，但若没有强援，给孩子做衣服这事当仁不让
 
-首先，将你们组织的标志（透明背景格式）进行一个三维旋转，这里选择**离轴2：左**
+首先，将标志主体图片（透明背景格式）进行一个三维旋转，这里选择**离轴2：左**
+
+> 如何得到透明背景格式的的图片？
+> * 谷歌搜图的时候，设置“工具->颜色->透明”
+> * 找到纯色背景的图片（比如最常见的白色背景），直接用某S中的`魔术橡皮擦`工具点击背景即可将背景擦除
 
 ![](screenshot/2019-08-04-18-59-09.png)
 
-然后，插入一个矩形，也进行一个三维旋转，但这里选择**离轴2：上**，最后，为它添加一个阴影，放到组织标志下面作为底座
+然后，插入一个矩形，也进行一个三维旋转，但这里选择**离轴2：上**，然后为它添加一个阴影，放到组织标志下面作为底座
 
 ![](screenshot/2019-08-04-18-52-36.png)![](screenshot/2019-08-04-19-57-16.png)
 
@@ -117,177 +467,49 @@ matlab程序运行之后就会得到一个`0和1矩阵x.csv`，里面就是这�
 
 ![](screenshot/2019-08-04-20-03-06.png)
 
-
 ------
 
-## 什么是 Markdown
+### 头像图片的批量处理
 
-Markdown 是一种方便记忆、书写的纯文本标记语言，用户可以使用这些标记符号以最小的输入代价生成极富表现力的文档：譬如您正在阅读的这份文档。它使用简单的符号标记不同的标题，分割不同的段落，**粗体** 或者 *斜体* 某些文字，更棒的是，它还可以
+![](screenshot/2019-08-07-02-36-52.png)
 
-### 1. 制作一份待办事宜 [Todo 列表](https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#13-待办事宜-todo-列表)
+矩阵中上千个有效图片对象，如果素材图片过少，会出现大量的重复，十分的不精彩，为此，我们需要准备大量的素材图片，但是素材一多，我们即面临两个大问题
 
-- [ ] 支持以 PDF 格式导出文稿
-- [ ] 改进 Cmd 渲染算法，使用局部渲染技术提高渲染效率
-- [x] 新增 Todo 列表功能
-- [x] 修复 LaTex 公式渲染问题
-- [x] 新增 LaTex 公式编号功能
+> * 图片太多，加入小程序后会导致大小超限，毕竟整个小程序大小限制在2MB，留给头像图片的空间不多，所以我们需要进行大小调整，而且，由于规模较大，需要批量调整
+> * 图片需由数组引入程序，这期间，我们需要将图片名字纳入数组中，但是这些图片可不会一开始就像上图中那样乖乖就范，它们的初始名称多是像`cc6489562ab4a5e30e4d073b4c43c21.jpg`这样的怪异字符串，只能复制粘贴进去，而且如果出问题，极难对应、调整，所以势必要统一命名
 
-### 2. 书写一个质能守恒公式[^LaTeX]
+批量调整图片大小可以使用`Caesium`这个软件，将图片直接全部拖入，`Ctrl + A`全选，选中`调整大小`,将新大小设置为`50px`，选中`全部相同`，点击`套用`,然后点击`压缩！`即可得到尺寸统一、大小缩减但质量尚可的图片
 
-$$E=mc^2$$
+![](screenshot/2019-08-07-16-57-28.png)
 
-### 3. 高亮一段代码[^code]
+然后，要将这些图片统一命名，步骤如下：
 
-```python
-@requires_authorization
-class SomeClass:
-    pass
+`shift + 右键`在图片文件夹打开cmd，运行`dir/b>rename.xls`，无法`shift + 右键`在此打卡命令行的同学，先打开cmd，逐级进到图片存放目录再运行即可
 
-if __name__ == '__main__':
-    # A comment
-    print 'hello world'
+```shell
+C:\Users\CYQ>d:
+
+D:\>cd D:\ELAB\Soft\mini
+
+D:\ELAB\Soft\mini>dir/b>rename.xls
+
+D:\ELAB\Soft\mini>
 ```
 
-### 4. 高效绘制 [流程图](https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#7-流程图)
+而后得到一个有当前文件夹下所有文件名字的Excel文件，但这里仍需综合利用Excel和notepad++**在所有名字两侧加上双引号**，这是后续bat命令的格式所限，必须这么做才能识别文件名
 
-```flow
-st=>start: Start
-op=>operation: Your Operation
-cond=>condition: Yes or No?
-e=>end
+而后，在B、C两列批量下拉生成格式化的新文件名和ren命令，将Excel公式`=C2&" "&A2&" "&B2`置于D2，下拉获取批量更名的bat命令
 
-st->op->cond
-cond(yes)->e
-cond(no)->op
-```
+![](screenshot/2019-08-07-17-32-35.png)
 
-### 5. 高效绘制 [序列图](https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#8-序列图)
-
-```seq
-Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!
-```
-
-### 6. 高效绘制 [甘特图](https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#9-甘特图)
-
-```gantt
-    title 项目开发流程
-    section 项目确定
-        需求分析       :a1, 2016-06-22, 3d
-        可行性报告     :after a1, 5d
-        概念验证       : 5d
-    section 项目实施
-        概要设计      :2016-07-05  , 5d
-        详细设计      :2016-07-08, 10d
-        编码          :2016-07-15, 10d
-        测试          :2016-07-22, 5d
-    section 发布验收
-        发布: 2d
-        验收: 3d
-```
-
-### 7. 绘制表格
-
-| 项目   |   价格 | 数量  |
-| ------ | -----: | :---: |
-| 计算机 | \$1600 |   5   |
-| 手机   |   \$12 |  12   |
-| 管线   |    \$1 |  234  |
-
-### 8. 更详细语法说明
-
-想要查看更详细的语法说明，可以参考我们准备的 [Cmd Markdown 简明语法手册][1]，进阶用户可以参考 [Cmd Markdown 高阶语法手册][2] 了解更多高级功能。
-
-总而言之，不同于其它 *所见即所得* 的编辑器：你只需使用键盘专注于书写文本内容，就可以生成印刷级的排版格式，省却在键盘和工具栏之间来回切换，调整内容和格式的麻烦。**Markdown 在流畅的书写和印刷级的阅读体验之间找到了平衡。** 目前它已经成为世界上最大的技术分享网站 GitHub 和 技术问答网站 StackOverFlow 的御用书写格式。
+复制出命令，将文件后缀名改为.bat，运行即可批量更名
 
 ---
 
-## 什么是 Cmd Markdown
+## 后记
 
-您可以使用很多工具书写 Markdown，但是 Cmd Markdown 是这个星球上我们已知的、最好的 Markdown 工具——没有之一 ：）因为深信文字的力量，所以我们和你一样，对流畅书写，分享思想和知识，以及阅读体验有极致的追求，我们把对于这些诉求的回应整合在 Cmd Markdown，并且一次，两次，三次，乃至无数次地提升这个工具的体验，最终将它演化成一个 **编辑/发布/阅读** Markdown 的在线平台——您可以在任何地方，任何系统/设备上管理这里的文字。
+本项目起源于带连理工宣传部的鬼才产品经理看到了北京冬奥会的一个造势小程序“冬奥有我”，然后给我发了一个视频和图片：
 
-### 1. 实时同步预览
-
-我们将 Cmd Markdown 的主界面一分为二，左边为**编辑区**，右边为**预览区**，在编辑区的操作会实时地渲染到预览区方便查看最终的版面效果，并且如果你在其中一个区拖动滚动条，我们有一个巧妙的算法把另一个区的滚动条同步到等价的位置，超酷！
-
-### 2. 编辑工具栏
-
-也许您还是一个 Markdown 语法的新手，在您完全熟悉它之前，我们在 **编辑区** 的顶部放置了一个如下图所示的工具栏，您可以使用鼠标在工具栏上调整格式，不过我们仍旧鼓励你使用键盘标记格式，提高书写的流畅度。
-
-![tool-editor](https://www.zybuluo.com/static/img/toolbar-editor.png)
-
-### 3. 编辑模式
-
-完全心无旁骛的方式编辑文字：点击 **编辑工具栏** 最右侧的拉伸按钮或者按下 `Ctrl + M`，将 Cmd Markdown 切换到独立的编辑模式，这是一个极度简洁的写作环境，所有可能会引起分心的元素都已经被挪除，超清爽！
-
-### 4. 实时的云端文稿
-
-为了保障数据安全，Cmd Markdown 会将您每一次击键的内容保存至云端，同时在 **编辑工具栏** 的最右侧提示 `已保存` 的字样。无需担心浏览器崩溃，机器掉电或者地震，海啸——在编辑的过程中随时关闭浏览器或者机器，下一次回到 Cmd Markdown 的时候继续写作。
-
-### 5. 离线模式
-
-在网络环境不稳定的情况下记录文字一样很安全！在您写作的时候，如果电脑突然失去网络连接，Cmd Markdown 会智能切换至离线模式，将您后续键入的文字保存在本地，直到网络恢复再将他们传送至云端，即使在网络恢复前关闭浏览器或者电脑，一样没有问题，等到下次开启 Cmd Markdown 的时候，她会提醒您将离线保存的文字传送至云端。简而言之，我们尽最大的努力保障您文字的安全。
-
-### 6. 管理工具栏
-
-为了便于管理您的文稿，在 **预览区** 的顶部放置了如下所示的 **管理工具栏**：
-
-![tool-manager](https://www.zybuluo.com/static/img/toolbar-manager.jpg)
-
-通过管理工具栏可以：
-
-<i class="icon-share"></i> 发布：将当前的文稿生成固定链接，在网络上发布，分享
-<i class="icon-file"></i> 新建：开始撰写一篇新的文稿
-<i class="icon-trash"></i> 删除：删除当前的文稿
-<i class="icon-cloud"></i> 导出：将当前的文稿转化为 Markdown 文本或者 Html 格式，并导出到本地
-<i class="icon-reorder"></i> 列表：所有新增和过往的文稿都可以在这里查看、操作
-<i class="icon-pencil"></i> 模式：切换 普通/Vim/Emacs 编辑模式
-
-### 7. 阅读工具栏
-
-![tool-manager](https://www.zybuluo.com/static/img/toolbar-reader.jpg)
-
-通过 **预览区** 右上角的 **阅读工具栏**，可以查看当前文稿的目录并增强阅读体验。
-
-工具栏上的五个图标依次为：
-
-<i class="icon-list"></i> 目录：快速导航当前文稿的目录结构以跳转到感兴趣的段落
-<i class="icon-chevron-sign-left"></i> 视图：互换左边编辑区和右边预览区的位置
-<i class="icon-adjust"></i> 主题：内置了黑白两种模式的主题，试试 **黑色主题**，超炫！
-<i class="icon-desktop"></i> 阅读：心无旁骛的阅读模式提供超一流的阅读体验
-<i class="icon-fullscreen"></i> 全屏：简洁，简洁，再简洁，一个完全沉浸式的写作和阅读环境
-
-### 8. 阅读模式
-
-在 **阅读工具栏** 点击 <i class="icon-desktop"></i> 或者按下 `Ctrl+Alt+M` 随即进入独立的阅读模式界面，我们在版面渲染上的每一个细节：字体，字号，行间距，前背景色都倾注了大量的时间，努力提升阅读的体验和品质。
-
-### 9. 标签、分类和搜索
-
-在编辑区任意行首位置输入以下格式的文字可以标签当前文档：
-
-标签： 未分类
-
-标签以后的文稿在【文件列表】（Ctrl+Alt+F）里会按照标签分类，用户可以同时使用键盘或者鼠标浏览查看，或者在【文件列表】的搜索文本框内搜索标题关键字过滤文稿，如下图所示：
-
-![file-list](https://www.zybuluo.com/static/img/file-list.png)
-
-### 10. 文稿发布和分享
-
-在您使用 Cmd Markdown 记录，创作，整理，阅读文稿的同时，我们不仅希望它是一个有力的工具，更希望您的思想和知识通过这个平台，连同优质的阅读体验，将他们分享给有相同志趣的人，进而鼓励更多的人来到这里记录分享他们的思想和知识，尝试点击 <i class="icon-share"></i> (Ctrl+Alt+P) 发布这份文档给好友吧！
-
-------
-
-再一次感谢您花费时间阅读这份欢迎稿，点击 <i class="icon-file"></i> (Ctrl+Alt+N) 开始撰写新的文稿吧！祝您在这里记录、阅读、分享愉快！
-
-作者 [@ghosert][3]     
-2016 年 07月 07日    
-
-[^LaTeX]: 支持 **LaTeX** 编辑显示支持，例如：$\sum_{i=1}^n a_i=0$， 访问 [MathJax][4] 参考更多使用方法。
-
-[^code]: 代码高亮功能支持包括 Java, Python, JavaScript 在内的，**四十一**种主流编程语言。
-
-[1]: https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown
-[2]: https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown#cmd-markdown-高阶语法手册
-[3]: http://weibo.com/ghosert
-[4]: http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference
+<video id="video" controls="" preload="none">
+    <source id="mp4" src="/dutcheer/material/1554981947238.mp4" type="video/mp4">
+</video>

@@ -1,0 +1,15 @@
+{
+  "pages": [
+ "pages/index/index",
+    "pages/70years/70years"
+      
+    
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#8B7E66",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  },
+  "sitemapLocation": "sitemap.json"
+}
