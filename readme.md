@@ -124,6 +124,8 @@ for (var l = 0; l < that.data.showcontrol.length; l++) {
 
 wxml中的代码如下：
 
+最外层的`linearray`是一个一维数组：`[1,2，...36]`，采用这种办法进行列表渲染是综合各种因素的折中之举，可能不是最好的办法
+
 ```html
   <view class='piccontainer'>
     <view wx:for="{{linearray}}" wx:for-item="i" wx:key="*this" class='linecontainer' wx:for-index="x">
@@ -138,7 +140,7 @@ wxml中的代码如下：
   </view>
 ```
 
-最外层的`linearray`是一个一维数组：`[1,2，...36]`，采用这种办法进行列表渲染是综合各种因素的折中之举，可能不是最好的办法
+如此一来，数据就从逻辑层绑定到了渲染层，静态的拼图就可以显示了
 
 ---
 
@@ -430,6 +432,51 @@ var animationarray1 = new Array();
 
 <img src="screenshot/Screenshot_2019-08-04-03-50.png" width="260px" />
 
+基本思路是有一个已经提前做好背景图，然后在这张背景图上绘出用户头像、昵称、参与位次和祝福语，背景图如下：
+
+<img src="dutcheer\material\dasdasd15a4d54s5a64fs.png" width="260px" />
+
+具体使用的技术是`canvas`，这里需要注意的是，绘图过程并不阻塞，使用在线链接是来不及的；为保证万无一失，绘图代码要写在下载函数的回调中（或是提前下载好保存在临时目录中）：
+
+```JavaScript
+//下载用户头像
+wx.downloadFile({
+        url: avatar_url,
+        success: function(res) {
+          var avatar_temp_url = res.tempFilePath;
+
+          //绘出背景图和用户头像，后面的四个参数是绘图区左上角x坐标、y坐标、绘图区宽、高
+          ctx.drawImage(bgImgPath, 0, 0, 1080, 1598);
+          ctx.drawImage(avatar_temp_url, 130, 900, 180, 180);
+
+          //文字信息都是提前写好赋值给变量的，这里直接应用即可
+          ctx.setFontSize(50)
+          ctx.setFillStyle('#ffffff')
+          ctx.fillText(nickname, 330, 950)
+          //...其他文字部分省略
+
+          //下面设置宽高，正式开始绘图并保存到临时目录以便预览，保存到用户手机还需另行授权
+          ctx.draw(false, function() {
+            wx.canvasToTempFilePath({
+              destWidth: 1080,
+              destHeight: 1598,
+              canvasId: 'myCanvas',
+              success: function(res) {
+                that.setData({
+                  shareImgSrc: res.tempFilePath
+                })
+              },
+              fail: function(res) {
+                console.log(res)
+              }
+            })
+          })
+        }
+      })
+```
+
+> 这个功能比较麻烦的倒不是绘图，是界面的兼容和用户授权导致的程序-界面分支，这部分源码见
+
 ---
 
 ## 其他事项
@@ -508,8 +555,23 @@ D:\ELAB\Soft\mini>
 
 ## 后记
 
-本项目起源于带连理工宣传部的鬼才产品经理看到了北京冬奥会的一个造势小程序“冬奥有我”，然后给我发了一个视频和图片：
+本项目起源于带连理工宣传部的一名老师看到了北京冬奥会的一个宣传小程序“冬奥有我”，然后给我发了一个视频和这个小程序生成的分享图片（由于GFM限制，视频已经转换成了GIF）：
 
-<video id="video" controls="" preload="none">
-    <source id="mp4" src="/dutcheer/material/1554981947238.mp4" type="video/mp4">
-</video>
+<img src="screenshot/u10bk-8xum6.gif"  />
+
+<img src="dutcheer\material\baa7f25368e0d63e027d1db2ba177d7.jpg" width="300px" />
+
+然后问我：
+
+> 能不能做个一样的？:fist:
+
+当时其实是没有思路的:baby_chick:，因为我从未见如此神奇的动画系统，过但是我本着冲冲冲:bug::bug::bug:的精神，一步步搞了出来；在需要素材图片时，这位老师还为我创造了很多便利条件，让多个部门的同学一起换了70周年主题头像，并提出了很多修改意见；组织的团结，是这款小程序的成功原因之一
+
+> 最后，祝贺现在的同志们就可以免走弯路，一步到位了！
+
+## 尚未解决的问题
+
+- [ ] 历史卷轴部分在苹果手机上是无法显示的，整个拼图动画失去了遮罩和缓冲，裸露出来；这个问题在借室友手机调试一晚上之后，可以确实是因为渲染引擎不同导致，而且大概率是CSS和animation在不同平台上的实现不同导致的
+- [ ] 放大用户头像功能没有100%拟真，实现全局放大；分析认为原对象使用了多个图层，这种技术方案也值得一试
+- [ ] 用户头像如果以原位置为几何中心放大，会被后生产的图片遮挡，设置z-index也是无效的；已经100%确定是`stacking context`的问题，但暂未解决，这也是为什么当前版本放大头像时是向上放大的
+- [ ] 拼图动画还是存在效率问题，没有做到纵享丝滑；这个渲染机制目前尚且没有弄清楚
