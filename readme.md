@@ -530,8 +530,6 @@ wx.downloadFile({
 <image mode='aspectFill' style='width:750rpx;height:100%; z-index:1; position:absolute; left:0; top:0;' src='../../images/photowall.jpg' ></image>
 ```
 
-<img src="screenshot/photowall.jpg" width="300px" />
-
 ## 2.2. 小程序 logo 的极速制作
 
 ![](screenshot/2019-08-04-18-43-51.png)
