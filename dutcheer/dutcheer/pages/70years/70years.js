@@ -386,10 +386,11 @@ Page({
       animationarray[l] = new Array();
       for (var p = 0; p < that.data.showcontrol[l].length; p++) {
         if (that.data.showcontrol[l][p] == 1) {
-         
+         //扩散距离translate设置为(random*2000-1000)是因为我们希望动画中的图片是在以自己为几何中心的一个恰当范围内实现布朗运动,而得到(-a,a)区间随机数的办法就是(random*2a-a)，为什么不使用random(-a,a)呢？因为js里面random函数没有原生这个重载方法；经过多次测试，a确定为1000，这里的单位是px
           animation = animation.translate(Math.floor(Math.random() * 2000 - 1000), Math.floor(Math.random() * 2000 - 1000)).scale(Math.floor(Math.random() * 10)).step({
             duration: 7000 + Math.floor(Math.random() * 2000)
           }) 
+          //为duration设置延时是因为scale是(t/duration)的函数，如果t,duration一致，那么数千张图片将会呈现完全一致的放大效果，这是比较无趣的；更改t需要延时触发，更改duration需要延时结束，这里，出于操作上的方便，设置延时结束，更改duration
           animationarray[l][p] = animation.export()
           
         }
@@ -397,7 +398,7 @@ Page({
     }
 
 
-
+//是的，user的头像图片将享受不一样的待遇，放大整整35倍，扩散半径仅为250，这一切都是为了让user享受到社会主义接班人的应有待遇，需要注意，animationarray[userx][usery]里面的userx和usery不能通过random*height|width得到，因为showcontrol里面有大量为空（0）的地方，要是取到这些值可就没有社会主义接班人了；在这个小程序中采取的做法是先将不为空的地方挑出来，然后在这些坐标里面进行随机
     animation = animation.translate(Math.floor(Math.random() * 500 - 250), Math.floor(Math.random() * 500 - 250)).scale(35).step({
       duration: 8000
     })
@@ -465,9 +466,7 @@ Page({
       })
     }, 1000)
 
-
-
-
+//由于我们渲染的对象太多，将扩散动画和聚集动画写到一个动画队列里将会导致严重的性能问题，因此，需要手动设置延时加载，单位是ms
     setTimeout(function() {
       that.setData({
         animationarray: animationarray
