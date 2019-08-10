@@ -1,9 +1,7 @@
 {
   "pages": [
- "pages/index/index",
+    "pages/index/index",
     "pages/70years/70years"
-      
-    
   ],
   "window": {
     "backgroundTextStyle": "light",
