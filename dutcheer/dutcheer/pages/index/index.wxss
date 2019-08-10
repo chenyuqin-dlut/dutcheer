@@ -68,6 +68,11 @@ movable-area {
   height:585rpx;
 }
 
+.door-page-section {
+  width: 750rpx;
+  height:799rpx;
+}
+
 .page-section:last-child {
   margin-bottom: 0;
 }

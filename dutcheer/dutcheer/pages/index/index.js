@@ -136,6 +136,23 @@ Page({
       activity: "",
       starttext: "开启相聚大工之旅",
     })
+    let that = this;
+    console.log(picCollection)
+    wx.getSystemInfo({
+      success: function (res) {
+        console.log(res)
+        var leftx = (res.screenWidth / 750) * 375
+        var rightx = (res.screenWidth / 750) * 750
+        console.log(res.screenWidth)
+        that.setData({
+          leftx: leftx,
+          rightx: rightx,
+          screenWidth: res.screenWidth,
+          right_disappear: false,
+          left_disappear: false,
+        })
+      },
+    })
   },
 
   onShareAppMessage: function (options) {
