@@ -1,6 +1,11 @@
 # 大连理工大学 70 周年校庆系列小程序之——相聚大工
 
+$\underline{微信小程序}$ $\underline{大连理工大学70周年校庆}$ $\underline{头像拼图}$ $\underline{照片墙}$ $\underline{马赛克拼图}$ $\underline{animation动画}$ $\underline{卷轴动画}$ $\underline{图像二值化}$ $\underline{MATLAB}$
+
+
 # 1. 项目简介
+
+:warning: $\underline{Android 10 设备进入小程序或在动画页黑屏！}$
 
 <img src="screenshot/gh_7f89566cd9f8_1280.jpg" width="260px" alt="扫一扫 使用微信小程序"/>
 
