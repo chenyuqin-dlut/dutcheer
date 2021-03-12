@@ -5,7 +5,7 @@
 
 # 1. 项目简介
 
-:warning: **Android 10 设备进入小程序或在动画页黑屏！**
+:warning: **Android 10 设备进入小程序或在动画页黑屏！**  **由于服务器迁移，现小程序已无法使用，运行效果请参考文中图片**
 
 <img src="screenshot/gh_7f89566cd9f8_1280.jpg" width="260px" alt="扫一扫 使用微信小程序"/>
 
